@@ -4,59 +4,29 @@ document.addEventListener('DOMContentLoaded',function(event){
     
     canvas.height = window.innerHeight;
     canvas.width = window.innerWidth;
-   
-    //def var
-    var x1=Math.floor( (Math.random()*window.innerWidth) +1);
-    var y1=Math.floor( (Math.random()*window.innerHeight) +1);
-    var x2=Math.floor( (Math.random()*window.innerWidth) +1);
-    var y2=Math.floor( (Math.random()*window.innerHeight) +1);
-    var x3=Math.floor( (Math.random()*window.innerWidth) +1);
-    var y3=Math.floor( (Math.random()*window.innerHeight) +1);
-   // var x1=prompt('enter x1 co-ordinate of triangle.');
-   // var y1=prompt('enter y1 co-ordinate of triangle.');
-   // var x2=prompt('enter x2 co-ordinate of triangle.');
-   // var y2=prompt('enter y2 co-ordinate of triangle.');
-   // var x3=prompt('enter x3 co-ordinate of triangle.');
-   // var y3=prompt('enter y3 co-ordinate of triangle.');
-   // var x=prompt('enter x co-ordinate of starting.');
-   // var y= prompt('enter y co-ordinate of starting.');
- 
    var x =0;
    var y=0;
- 
-   console.log(x1,y1,x2,y2,x3,y3)
-   //calling for triangle
-   drawTriangle(x1,y1,x2,y2,x3,y3,ctx)
-  
+  var a = parseInt( prompt('Enter number of vertices'))   //number of vertices
+  var arr = drawPolygon(ctx,a)
    //calling for starting point
    drawPoint(x,y,ctx)
    
    //loop
-   for(var i=0;i<5500;i++)
-   {
-     const rand = Math.floor( (Math.random()*6) +1) 
- 
-     if(rand == 1 || rand == 2)
-     {
-        x=(x+x1)/2;
-        y=(y+y1)/2;
-        drawPoint(x,y,ctx);
-     }
-     else if(rand == 3 || rand == 4)
+   if(arr)       //once we have recevied arr we start drawing points
+   { 
+    for(var i=0;i<10000;i++)
     {
-      x=(x+x2)/2;
-      y=(y+y2)/2;
-      drawPoint(x,y,ctx);
-    }
-    else 
-    {
-     x=(x+x3)/2;
-     y=(y+y3)/2;
-      drawPoint(x,y,ctx);
-    }
- 
+      
+     setTimeout( () => {    
+      const rand = Math.floor( (Math.random()*a))              //gives random val between 0-a
+       x = (x+arr[0][rand])/2 
+       y = (y +arr[1][rand])/2
+       drawPoint(x,y,ctx);
+     },100)                           //setting delay after eachpoint
+      
    }
- 
+  
+   }
  
 })
 
@@ -69,15 +39,36 @@ function drawPoint(x,y,ctx){
     ctx.fillStyle = "#00e1f5";
     ctx.fill();
  }
- function drawTriangle(x1,y1,x2,y2,x3,y3,ctx){
-     //triangle
- 
-     ctx.beginPath();
-     ctx.moveTo(x1,y1)        //point A
-     ctx.lineTo(x2,y2);   // point B
-     ctx.lineTo(x3,y3);    //point C 
-     ctx.closePath();
-     ctx.lineWidth = 6;
-     ctx.stroke();
- 
+ function drawPolygon(ctx,a){
+      
+      // to draw polygon of diff vertices we first consider a circle of radius R with coordinate of center as 
+      //x =width of screen/2 and y = height of screen/2
+
+
+     const angle  = (2*Math.PI)/a;       //angle between  each side 
+     const radius = 350;                  
+     var arrX=[]                        
+     var arrY=[]
+     var cenX = window.innerWidth/2
+     var cenY = window.innerHeight/2
+     if(a)
+     {
+        ctx.beginPath()
+        ctx.translate(cenX,cenY);
+        ctx.moveTo(radius,0);
+        arrX[0] = radius
+        arrY[0] = 0
+        for (var i = 1; i < a; i++) {
+          arrX[i]=   radius*Math.cos(angle*i)                  // formula used rcos(theta),rsin(theta)
+          arrY[i]=  radius*Math.sin(angle*i)
+          ctx.lineTo(radius*Math.cos(angle*i),radius*Math.sin(angle*i));
+        }
+        ctx.closePath();
+        ctx.lineWidth = 6;
+        ctx.stroke();
+   
+     }
+
+     return [arrX,arrY]            //returing array considering arrX and arrY
+      
  }
